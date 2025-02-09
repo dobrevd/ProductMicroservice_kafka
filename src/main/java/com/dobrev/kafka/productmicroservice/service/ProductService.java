@@ -1,4 +1,5 @@
 package com.dobrev.kafka.productmicroservice.service;
+import com.dobrev.kafka.core.ProductCreatedEvent;
 
 import com.dobrev.kafka.productmicroservice.dto.ProductDto;
 import lombok.RequiredArgsConstructor;

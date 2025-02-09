@@ -14,6 +14,7 @@ java {
 }
 
 repositories {
+	mavenLocal()
 	mavenCentral()
 }
 
@@ -23,6 +24,8 @@ ext {
 }
 
 dependencies {
+	implementation 'com.dobrev.kafka:core:1.0-SNAPSHOT'
+
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.kafka:spring-kafka'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
@@ -33,6 +36,11 @@ dependencies {
 	annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
 	implementation "org.mapstruct:mapstruct:${mapstructVersion}"
 	annotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}"
+}
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(17)
+	}
 }
 
 tasks.named('test') {
