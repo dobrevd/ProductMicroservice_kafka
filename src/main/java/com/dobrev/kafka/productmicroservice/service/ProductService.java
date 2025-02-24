@@ -2,8 +2,10 @@ package com.dobrev.kafka.productmicroservice.service;
 import com.dobrev.kafka.core.ProductCreatedEvent;
 
 import com.dobrev.kafka.productmicroservice.dto.ProductDto;
+import com.dobrev.kafka.productmicroservice.dto.ProductReservedEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.kafka.clients.producer.ProducerRecord;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
@@ -15,26 +17,32 @@ import java.util.UUID;
 @Slf4j
 public class ProductService {
     @Value("${product-service.kafka.topic}")
-    private String kafkaTopic;
-    private final KafkaTemplate<String, ProductCreatedEvent> kafkaTemplate;
+    private String productCreatedTopic;
+    @Value("${product-service.kafka.reserve-topic}")
+    private String productReservedTopic;
+    private final KafkaTemplate<String, Object> kafkaTemplate;
 
     public String createProduct(ProductDto productDto){
         var productId = UUID.randomUUID().toString();
+        var productEvent = createProductCreatedEvent(productDto, productId);
 
-        var productEvent = ProductCreatedEvent.builder()
-                .productId(productId)
-                .title(productDto.title())
-                .price(productDto.price())
-                .quantity(productDto.quantity())
-                .build();
+        var record = new ProducerRecord<>(productCreatedTopic, productId, productEvent);
+        record.headers().add("messageId", productEvent.productId().getBytes());
 
-        sendProductEventToKafka(productId, productEvent);
+        sendProductEventToKafka(productCreatedTopic, productId, productEvent);
 
         return productId;
     }
 
-    private void sendProductEventToKafka(String productId, ProductCreatedEvent productEvent) {
-         kafkaTemplate.send(kafkaTopic, productId, productEvent)
+    public void reserveProduct(String productId, Integer quantity) {
+        var productReservedEvent = new ProductReservedEvent(productId,  quantity);
+        sendProductEventToKafka(productReservedTopic, productId, productReservedEvent);
+
+        log.info("Sent event about product reservation {}", productId);
+    }
+
+    private void sendProductEventToKafka(String topic, String productId, Object productEvent) {
+        kafkaTemplate.send(topic, productId, productEvent)
                 .whenComplete((result, exception) -> {
                     if (exception != null){
                         log.error("Failed to send message: {}", exception.getMessage());
@@ -42,5 +50,14 @@ public class ProductService {
                         log.info("Message sent successfully: {}", result.getRecordMetadata());
                     }
                 });
+    }
+
+    private ProductCreatedEvent createProductCreatedEvent(ProductDto productDto, String productId) {
+        return ProductCreatedEvent.builder()
+                .productId(productId)
+                .title(productDto.title())
+                .price(productDto.price())
+                .quantity(productDto.quantity())
+                .build();
     }
 }

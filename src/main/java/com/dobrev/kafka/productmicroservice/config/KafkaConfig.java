@@ -11,13 +11,28 @@ import java.util.Map;
 @Configuration
 public class KafkaConfig {
     @Value("${product-service.kafka.topic}")
-    private String kafkaTopic;
+    private String productCreatedTopic;
+    @Value("${product-service.kafka.reserve-topic}")
+    private String productReservedTopic;
+    @Value("${product-service.kafka.topic-replication-factor}")
+    private Integer topicReplicationFactor;
+    @Value("${product-service.kafka.topic-partitions}")
+    private Integer topicPartitions;
 
     @Bean
-    NewTopic createTopic(){
-        return TopicBuilder.name(kafkaTopic)
-                .partitions(3)
-                .replicas(3)
+    NewTopic productCreatedTopic(){
+        return TopicBuilder.name(productCreatedTopic)
+                .partitions(topicReplicationFactor)
+                .replicas(topicPartitions)
+                .configs(Map.of("min.insync.replicas", "2"))
+                .build();
+    }
+
+    @Bean
+    NewTopic productReservedTopic(){
+        return TopicBuilder.name(productReservedTopic)
+                .partitions(topicReplicationFactor)
+                .replicas(topicPartitions)
                 .configs(Map.of("min.insync.replicas", "2"))
                 .build();
     }
