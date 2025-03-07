@@ -12,8 +12,8 @@ import java.util.Map;
 public class KafkaConfig {
     @Value("${product-service.kafka.topic}")
     private String productCreatedTopic;
-    @Value("${product-service.kafka.reserve-topic}")
-    private String productReservedTopic;
+    @Value("${product-service.kafka.delete-topic}")
+    private String productDeleteTopic;
     @Value("${product-service.kafka.topic-replication-factor}")
     private Integer topicReplicationFactor;
     @Value("${product-service.kafka.topic-partitions}")
@@ -29,8 +29,8 @@ public class KafkaConfig {
     }
 
     @Bean
-    NewTopic productReservedTopic(){
-        return TopicBuilder.name(productReservedTopic)
+    NewTopic productDeleteTopic(){
+        return TopicBuilder.name(productDeleteTopic)
                 .partitions(topicReplicationFactor)
                 .replicas(topicPartitions)
                 .configs(Map.of("min.insync.replicas", "2"))
