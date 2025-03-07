@@ -2,7 +2,7 @@ package com.dobrev.kafka.productmicroservice.service;
 import com.dobrev.kafka.core.ProductCreatedEvent;
 
 import com.dobrev.kafka.productmicroservice.dto.ProductDto;
-import com.dobrev.kafka.productmicroservice.dto.ProductReservedEvent;
+import com.dobrev.kafka.productmicroservice.dto.ProductDeleteEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -18,8 +18,8 @@ import java.util.UUID;
 public class ProductService {
     @Value("${product-service.kafka.topic}")
     private String productCreatedTopic;
-    @Value("${product-service.kafka.reserve-topic}")
-    private String productReservedTopic;
+    @Value("${product-service.kafka.delete-topic}")
+    private String productDeleteTopic;
     private final KafkaTemplate<String, Object> kafkaTemplate;
 
     public String createProduct(ProductDto productDto){
@@ -34,9 +34,9 @@ public class ProductService {
         return productId;
     }
 
-    public void reserveProduct(String productId, Integer quantity) {
-        var productReservedEvent = new ProductReservedEvent(productId,  quantity);
-        sendProductEventToKafka(productReservedTopic, productId, productReservedEvent);
+    public void deleteProduct(String productId, Integer quantity) {
+        var productDeleteEvent = new ProductDeleteEvent(productId,  quantity);
+        sendProductEventToKafka(productDeleteTopic, productId, productDeleteEvent);
 
         log.info("Sent event about product reservation {}", productId);
     }

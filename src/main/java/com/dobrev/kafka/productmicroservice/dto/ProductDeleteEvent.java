@@ -1,6 +1,6 @@
 package com.dobrev.kafka.productmicroservice.dto;
 
-public record ProductReservedEvent(
+public record ProductDeleteEvent(
         String productId,
         Integer quantity
 ) {}

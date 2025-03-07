@@ -22,8 +22,8 @@ public class ProductController {
     }
 
     @GetMapping("/id")
-    public void reserveProduct(@RequestParam("id") String productId,
+    public void deleteProduct(@RequestParam("id") String productId,
                                @RequestParam("quantity") Integer quantity){
-        productService.reserveProduct(productId, quantity);
+        productService.deleteProduct(productId, quantity);
     }
 }
