@@ -8,7 +8,7 @@ import org.springframework.kafka.config.TopicBuilder;
 
 import java.util.Map;
 
-@Configuration
+//@Configuration
 public class KafkaConfig {
     @Value("${product-service.kafka.topic}")
     private String productCreatedTopic;
