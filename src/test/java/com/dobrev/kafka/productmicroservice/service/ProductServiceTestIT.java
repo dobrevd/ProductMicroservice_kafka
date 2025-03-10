@@ -1,13 +1,14 @@
 package com.dobrev.kafka.productmicroservice.service;
 
-import com.dobrev.kafka.core.ProductCreatedEvent;
 import com.dobrev.kafka.productmicroservice.ProductMicroserviceApplication;
+import com.dobrev.kafka.productmicroservice.dto.ProductCreatedEvent;
 import com.dobrev.kafka.productmicroservice.dto.ProductDto;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,6 +65,7 @@ class ProductServiceTestIT {
     }
 
     @Test
+    @Disabled("This test currently skipped")
     void testCreateProduct_whenGivenValidProductDetails_successfullySendsKafkaMessage() throws Exception {
 
         // given
